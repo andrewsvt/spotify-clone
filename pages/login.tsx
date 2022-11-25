@@ -4,13 +4,16 @@ import { ClientSafeProvider, LiteralUnion } from 'next-auth/react/types';
 import { BuiltInProviderType } from 'next-auth/providers';
 
 interface LoginProps {
-  providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>;
+  providers: Record<
+    LiteralUnion<BuiltInProviderType, string>,
+    ClientSafeProvider
+  >;
 }
 
 const Login: NextPage<LoginProps> = ({ providers }) => {
   return (
-    <div className="flex flex-col items-center bg-black min-h-screen w-full justify-center">
-      <img src="https://i.imgur.com/fPuEa9V.png" alt="" className="w-48 mb-7" />
+    <div className='flex flex-col items-center bg-black min-h-screen w-full justify-center'>
+      <img src='https://i.imgur.com/fPuEa9V.png' alt='' className='w-48 mb-7' />
 
       {Object.values(providers).map((provider) => (
         <div key={provider.id}>
@@ -20,7 +23,8 @@ const Login: NextPage<LoginProps> = ({ providers }) => {
                 callbackUrl: '/',
               })
             }
-            className="bg-[#1fdf64] text-white py-5 px-7 rounded-full">
+            className='bg-[#1fdf64] text-white py-5 px-7 rounded-full'
+          >
             Login with {provider.name}
           </button>
         </div>
