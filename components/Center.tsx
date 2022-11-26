@@ -5,6 +5,7 @@ import { shuffle } from 'lodash';
 import { playlistIdState, playlistState } from '../atoms/playlistAtom';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import useSpotify from '../hooks/useSpotify';
+import Songs from './Songs';
 
 const colors = [
   'from-indigo-900',
@@ -44,49 +45,38 @@ const Center: NextPage = () => {
   console.log(playlist);
 
   return (
-    <div className='flex flex-grow text-white bg-[#121212] '>
-      <header className='absolute top-5 right-8'>
-        <div className='flex items-center bg-black space-x-3 opacity-90 cursor-pointer rounded-full p-1 pr-2'>
+    <div className="flex flex-grow h-screen overflow-y-scroll flex-col text-white bg-[#121212]">
+      <header className="absolute top-5 right-8">
+        <div className="flex items-center bg-black space-x-3 opacity-90 cursor-pointer rounded-full p-1 pr-2">
           <img
-            className='rounded-full w-7 h-7'
-            src='https://i.scdn.co/image/ab6775700000ee854dec4400792d01f4e2aa7438'
-            alt=''
-          ></img>
-          <h2 className='font-medium'>Esendex</h2>
+            className="rounded-full w-7 h-7"
+            src="https://i.scdn.co/image/ab6775700000ee854dec4400792d01f4e2aa7438"
+            alt=""></img>
+          <h2 className="font-medium">Esendex</h2>
           <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
             strokeWidth={1.5}
-            stroke='currentColor'
-            className='w-5 h-5'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M19.5 8.25l-7.5 7.5-7.5-7.5'
-            />
+            stroke="currentColor"
+            className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </div>
       </header>
       <section
-        className={`flex items-end space-x-7 bg-gradient-to-b to-[#121212] ${color} h-80 p-8 w-full`}
-      >
-        <img
-          className='h-52 w-52 shadow-2xl'
-          src={playlist?.images?.[0]?.url}
-          alt=''
-        ></img>
-        <div className='flex flex-col space-y-2'>
-          <span className='font-medium'>{playlist?.type}</span>
-          <h1 className='font-bold text-4xl'>{playlist?.name}</h1>
-          <div className='flex flex-row items-center space-x-2'>
-            <span>{playlist?.owner.display_name}</span>
+        className={`flex items-end space-x-7 bg-gradient-to-b to-[#121212] ${color} h-80 p-8 w-full`}>
+        <img className="h-52 w-52 shadow-2xl" src={playlist?.images?.[0]?.url} alt=""></img>
+        <div className="flex flex-col space-y-4">
+          <span className="font-medium uppercase text-xs">{playlist?.type}</span>
+          <h1 className="font-bold lg:text-8xl md:text-4xl m-[-4px]">{playlist?.name}</h1>
+          <div className="font-light text-sm flex flex-row items-center space-x-2">
+            <span className="font-medium">{playlist?.owner.display_name}</span>
             {playlist?.followers?.total ? (
               <>
-                <div className='text-[8px]'>•</div>
+                <div className="text-[8px]">•</div>
                 <span>
-                  {`${playlist?.followers?.total} follower${
+                  {`${playlist?.followers?.total} like${
                     Number(playlist?.followers?.total) > 1 ? 's' : ''
                   }`}
                 </span>
@@ -94,7 +84,7 @@ const Center: NextPage = () => {
             ) : (
               ''
             )}
-            <div className='text-[8px]'>•</div>
+            <div className="text-[8px]">•</div>
             <span>
               {`${playlist?.tracks?.items.length} track${
                 Number(playlist?.tracks?.items.length) > 1 ? 's' : ''
@@ -103,6 +93,9 @@ const Center: NextPage = () => {
           </div>
         </div>
       </section>
+      <div>
+        <Songs />
+      </div>
     </div>
   );
 };

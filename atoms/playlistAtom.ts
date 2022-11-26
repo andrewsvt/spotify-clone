@@ -5,7 +5,7 @@ export const playlistState = atom<SpotifyApi.SinglePlaylistResponse | null>({
   default: null,
 });
 
-export const playlistIdState = atom<string | null>({
+export const playlistIdState = atom<string>({
   key: 'playlistIdState',
-  default: null,
+  default: '3P1RRktaaEBcMhdLlBcPyU',
 });
