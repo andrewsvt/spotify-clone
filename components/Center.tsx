@@ -2,6 +2,9 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { shuffle } from 'lodash';
+import { playlistIdState, playlistState } from '../atoms/playlistAtom';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import useSpotify from '../hooks/useSpotify';
 
 const colors = [
   'from-indigo-900',
@@ -16,10 +19,29 @@ const colors = [
 const Center: NextPage = () => {
   const { data: session } = useSession();
   const [color, setColor] = useState<string>();
+  const selectedPlaylistId = useRecoilValue(playlistIdState);
+  const [playlist, setPlaylist] = useRecoilState(playlistState);
+
+  const { spotifyApi } = useSpotify();
 
   useEffect(() => {
     setColor(shuffle(colors).pop());
-  }, []);
+  }, [selectedPlaylistId]);
+
+  useEffect(() => {
+    if (selectedPlaylistId) {
+      spotifyApi
+        .getPlaylist(selectedPlaylistId)
+        .then((data) => {
+          setPlaylist(data.body);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [selectedPlaylistId, spotifyApi]);
+
+  console.log(playlist);
 
   return (
     <div className='flex flex-grow text-white bg-[#121212] '>
@@ -49,7 +71,16 @@ const Center: NextPage = () => {
       </header>
       <section
         className={`flex itrms-end space-x-7 bg-gradient-to-b to-[#121212] ${color} h-80 p-8 w-full`}
-      ></section>
+      >
+        <img
+          className='h-44 w-44 shadow-2xl'
+          src={playlist?.images?.[0]?.url}
+          alt=''
+        ></img>
+        <div>
+          <p>{playlist?.name}</p>
+        </div>
+      </section>
     </div>
   );
 };

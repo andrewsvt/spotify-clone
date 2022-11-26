@@ -1,20 +1,27 @@
 import type { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
+import { useRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
 import useSpotify from '../hooks/useSpotify';
+import { playlistIdState } from '../atoms/playlistAtom';
 
 const Sidebar: NextPage = () => {
   const { spotifyApi } = useSpotify();
   const { data: session, status } = useSession();
   const [playlists, setPlaylists] =
     useState<SpotifyApi.PlaylistObjectSimplified[]>();
-  const [playlistId, setPlaylistId] = useState<string>();
+  const [playlistId, setPlaylistId] = useRecoilState(playlistIdState);
 
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
-      spotifyApi.getUserPlaylists().then((data) => {
-        setPlaylists(data.body.items);
-      });
+      spotifyApi
+        .getUserPlaylists()
+        .then((data) => {
+          setPlaylists(data.body.items);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, [session, spotifyApi]);
 
@@ -122,6 +129,7 @@ const Sidebar: NextPage = () => {
         <div className='flex flex-col space-y-2'>
           {playlists?.map((playlist) => (
             <span
+              key={playlist.id}
               onClick={() => setPlaylistId(playlist.id)}
               className='font-normal text-base cursor-pointer hover:text-white'
             >
