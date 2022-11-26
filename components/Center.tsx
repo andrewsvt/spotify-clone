@@ -70,15 +70,37 @@ const Center: NextPage = () => {
         </div>
       </header>
       <section
-        className={`flex itrms-end space-x-7 bg-gradient-to-b to-[#121212] ${color} h-80 p-8 w-full`}
+        className={`flex items-end space-x-7 bg-gradient-to-b to-[#121212] ${color} h-80 p-8 w-full`}
       >
         <img
-          className='h-44 w-44 shadow-2xl'
+          className='h-52 w-52 shadow-2xl'
           src={playlist?.images?.[0]?.url}
           alt=''
         ></img>
-        <div>
-          <p>{playlist?.name}</p>
+        <div className='flex flex-col space-y-2'>
+          <span className='font-medium'>{playlist?.type}</span>
+          <h1 className='font-bold text-4xl'>{playlist?.name}</h1>
+          <div className='flex flex-row items-center space-x-2'>
+            <span>{playlist?.owner.display_name}</span>
+            {playlist?.followers?.total ? (
+              <>
+                <div className='text-[8px]'>•</div>
+                <span>
+                  {`${playlist?.followers?.total} follower${
+                    Number(playlist?.followers?.total) > 1 ? 's' : ''
+                  }`}
+                </span>
+              </>
+            ) : (
+              ''
+            )}
+            <div className='text-[8px]'>•</div>
+            <span>
+              {`${playlist?.tracks?.items.length} track${
+                Number(playlist?.tracks?.items.length) > 1 ? 's' : ''
+              }`}
+            </span>
+          </div>
         </div>
       </section>
     </div>
