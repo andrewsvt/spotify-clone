@@ -8,6 +8,7 @@
   "dependencies": {
     "@heroicons/react": "^2.0.13",
     "@types/lodash": "^4.14.190",
+    "@types/spotify-web-playback-sdk": "^0.1.15",
     "dotenv": "^16.0.3",
     "lodash": "^4.17.21",
     "next": "latest",

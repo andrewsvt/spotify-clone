@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { shuffle } from 'lodash';
-import { playlistIdState, playlistState } from '../atoms/playlistAtom';
+import { currentPlaylistIdState, playlistState } from '../atoms/playlistAtom';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import useSpotify from '../hooks/useSpotify';
 import Songs from './Songs';
@@ -20,7 +20,7 @@ const colors = [
 const Center: NextPage = () => {
   const { data: session } = useSession();
   const [color, setColor] = useState<string>();
-  const selectedPlaylistId = useRecoilValue(playlistIdState);
+  const selectedPlaylistId = useRecoilValue(currentPlaylistIdState);
   const [playlist, setPlaylist] = useRecoilState(playlistState);
 
   const { spotifyApi } = useSpotify();
@@ -66,10 +66,15 @@ const Center: NextPage = () => {
       </header>
       <section
         className={`flex items-end space-x-7 bg-gradient-to-b to-[#121212] ${color} h-80 p-8 w-full`}>
-        <img className="h-52 w-52 shadow-2xl" src={playlist?.images?.[0]?.url} alt=""></img>
+        <img
+          className="h-52 w-52 shadow-2xl select-none pointer-events-none"
+          src={playlist?.images?.[0]?.url}
+          alt=""></img>
         <div className="flex flex-col space-y-4">
           <span className="font-medium uppercase text-xs">{playlist?.type}</span>
-          <h1 className="font-bold lg:text-8xl md:text-4xl m-[-4px]">{playlist?.name}</h1>
+          <h1 className="font-bold lg:text-8xl md:text-4xl m-[-4px] pointer-events-none">
+            {playlist?.name}
+          </h1>
           <div className="font-light text-sm flex flex-row items-center space-x-2">
             <span className="font-medium">{playlist?.owner.display_name}</span>
             {playlist?.followers?.total ? (
