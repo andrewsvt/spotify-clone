@@ -1,10 +1,8 @@
 import type { NextPage } from 'next';
-import { useEffect } from 'react';
-import { getToken } from 'next-auth/jwt';
 import { useRecoilState } from 'recoil';
-import { currentTrackState, isActiveState, isPausedState, playerState } from '../atoms/songAtom';
 import useSpotify from '../hooks/useSpotify';
 import { msToTime } from '../lib/time';
+import { currentTrackIdState, isPlayingState } from '../atoms/songAtom';
 
 interface SongProps {
   item: SpotifyApi.PlaylistTrackObject;
@@ -13,63 +11,21 @@ interface SongProps {
 
 const Song: NextPage<SongProps> = ({ item, order }) => {
   const { spotifyApi } = useSpotify();
-  const token = spotifyApi.getAccessToken() || '';
 
-  const [currentTrack, setCurrentTrack] = useRecoilState(currentTrackState);
-  const [player, setPlayer] = useRecoilState(playerState);
-  const [isPaused, setPaused] = useRecoilState(isPausedState);
-  const [isActive, setActive] = useRecoilState(isActiveState);
+  const [currentTrackId, setCurrentTrackId] = useRecoilState(currentTrackIdState);
+  const [isPlaying, setPalying] = useRecoilState(isPlayingState);
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://sdk.scdn.co/spotify-player.js';
-    script.async = true;
-
-    document.body.appendChild(script);
-
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const player = new window.Spotify.Player({
-        name: 'Web Playback SDK',
-        getOAuthToken: (cb) => {
-          cb(token);
-        },
-        volume: 0.5,
-      });
-
-      setPlayer(player);
-
-      player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
-      });
-
-      player.addListener('not_ready', ({ device_id }) => {
-        console.log('Device ID has gone offline', device_id);
-      });
-
-      player.addListener('player_state_changed', (state) => {
-        if (!state) {
-          return;
-        }
-
-        setCurrentTrack(item.track);
-        setPaused(state.paused);
-
-        player.getCurrentState().then((state) => {
-          if (!state) {
-            setActive(false);
-          } else {
-            setActive(true);
-          }
-        });
-      });
-
-      player.connect();
-    };
-  }, [token]);
+  const playSong = () => {
+    setCurrentTrackId(item.track!.id);
+    setPalying(true);
+    spotifyApi.play({
+      uris: [item.track!.uri],
+    });
+  };
 
   return (
     <div
-      onClick={() => player}
+      onClick={playSong}
       className="grid grid-cols-2 px-4 py-2 rounded-md text-gray-500 font-normal text-sm hover:bg-[#ffffff25]">
       <div className="flex items-center space-x-4">
         <div className="min-w-[1.5rem]">{order + 1}</div>
