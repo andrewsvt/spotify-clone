@@ -1,10 +1,14 @@
 import type { NextPage } from 'next';
+
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import useSpotify from '../hooks/useSpotify';
+
 import { shuffle } from 'lodash';
+
 import { currentPlaylistIdState, playlistState } from '../atoms/playlistAtom';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import useSpotify from '../hooks/useSpotify';
+
 import Songs from './Songs';
 
 const colors = [
@@ -45,7 +49,7 @@ const Center: NextPage = () => {
   console.log(playlist);
 
   return (
-    <div className="flex flex-grow h-screen overflow-y-scroll flex-col text-white bg-[#121212]">
+    <div className="flex flex-grow h-screen overflow-y-scroll flex-col text-white bg-[#121212] pb-24">
       <header className="absolute top-5 right-8">
         <div className="flex items-center bg-black space-x-3 opacity-90 cursor-pointer rounded-full p-1 pr-2">
           <img
@@ -66,10 +70,30 @@ const Center: NextPage = () => {
       </header>
       <section
         className={`flex items-end space-x-7 bg-gradient-to-b to-[#121212] ${color} h-80 p-8 w-full`}>
-        <img
-          className="h-52 w-52 shadow-2xl select-none pointer-events-none"
-          src={playlist?.images?.[0]?.url}
-          alt=""></img>
+        {playlist?.images?.[0]?.url ? (
+          <img
+            className="h-52 w-52 shadow-2xl select-none pointer-events-none"
+            src={playlist?.images?.[0]?.url}
+            alt=""
+          />
+        ) : (
+          <div className="h-52 w-52 bg-[#282828] shadow-2xl flex justify-center items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="gray"
+              className="w-16 h-16">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
+              />
+            </svg>
+          </div>
+        )}
+
         <div className="flex flex-col space-y-4">
           <span className="font-medium uppercase text-xs">{playlist?.type}</span>
           <h1 className="font-bold lg:text-8xl md:text-4xl m-[-4px] pointer-events-none">
@@ -92,7 +116,10 @@ const Center: NextPage = () => {
             <div className="text-[8px]">•</div>
             <span>
               {`${playlist?.tracks?.items.length} track${
-                Number(playlist?.tracks?.items.length) > 1 ? 's' : ''
+                Number(playlist?.tracks?.items.length) > 1 ||
+                Number(playlist?.tracks?.items.length) === 0
+                  ? 's'
+                  : ''
               }`}
             </span>
           </div>

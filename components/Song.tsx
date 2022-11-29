@@ -34,7 +34,9 @@ const Song: NextPage<SongProps> = ({ item, order }) => {
           <h2 className="w-36 lg:w-64 text-white text-base truncate">{item.track?.name}</h2>
           <div className="w-36 lg:w-[32rem] space-x-1 truncate">
             {item.track?.artists.map((artist, i) => (
-              <span>{`${artist.name}${i + 1 !== item.track?.artists.length ? ',' : ''}`}</span>
+              <span key={artist.id}>{`${artist.name}${
+                i + 1 !== item.track?.artists.length ? ',' : ''
+              }`}</span>
             ))}
           </div>
         </div>
