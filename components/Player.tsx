@@ -14,7 +14,7 @@ const Player: NextPage = () => {
   const { data: session, status } = useSession();
 
   const [currentTrackId, setCurrentTrackId] = useRecoilState(currentTrackIdState);
-  const [isPlaying, setPalying] = useRecoilState(isPlayingState);
+  const [isPlaying, setPlaying] = useRecoilState(isPlayingState);
   const [volume, setVolume] = useState<number>(50);
 
   const songInfo = useSongInfo();
@@ -27,8 +27,10 @@ const Player: NextPage = () => {
       });
 
       spotifyApi.getMyCurrentPlaybackState().then((data) => {
-        setPalying(data.body?.is_playing);
+        setPlaying(data.body?.is_playing);
       });
+
+      console.log('device', (await spotifyApi.getMyDevices()).body.devices?.[0].id);
     }
   };
 
@@ -39,6 +41,18 @@ const Player: NextPage = () => {
     }
   }, [currentTrackId, spotifyApi, session]);
 
+  const handlePlayPause = async () => {
+    await spotifyApi.getMyCurrentPlaybackState().then((data) => {
+      if (data.body.is_playing) {
+        spotifyApi.pause();
+        setPlaying(false);
+      } else {
+        spotifyApi.play();
+        setPlaying(true);
+      }
+    });
+  };
+
   return (
     <div className="grid grid-cols-3 items-center px-2 h-[5.5rem] text-xs text-white bg-[#181818] border-t border-[#282828] md:px-5 md:text-base">
       <div className="flex item-center space-x-3">
@@ -48,8 +62,97 @@ const Player: NextPage = () => {
           <span className="text-xs text-gray-500">{songInfo?.artists?.[0]?.name}</span>
         </div>
       </div>
-      <div></div>
-      <div></div>
+      <div className="flex flex-row items-center justify-center space-x-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="white"
+          className="w-5 h-5 cursor-pointer">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+          />
+        </svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="white"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="white"
+          className="w-6 h-6 cursor-pointer">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.953l7.108-4.062A1.125 1.125 0 0121 8.688v8.123zM11.25 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.953L9.567 7.71a1.125 1.125 0 011.683.977v8.123z"
+          />
+        </svg>
+        <div
+          onClick={handlePlayPause}
+          className="bg-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer">
+          {isPlaying ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={4}
+              stroke="#181818"
+              className="w-5 h-5">
+              <path
+                strokeLinecap="square"
+                strokeLinejoin="inherit"
+                d="M15.75 5.25v13.5m-7.5-13.5v13.5"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="#181818"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="#181818"
+              className="w-5 h-5">
+              <path
+                strokeLinecap="square"
+                strokeLinejoin="inherit"
+                d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"
+              />
+            </svg>
+          )}
+        </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="white"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="white"
+          className="w-6 h-6 cursor-pointer">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062A1.125 1.125 0 013 16.81V8.688zM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062a1.125 1.125 0 01-1.683-.977V8.688z"
+          />
+        </svg>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="white"
+          className="w-5 h-5 cursor-pointer">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"
+          />
+        </svg>
+      </div>
+      <div className="flex items-center justify-end space-x-3">
+        <input className="w-14 md:w-28" type="range" value={volume} min={0} max={100}></input>
+      </div>
     </div>
   );
 };
