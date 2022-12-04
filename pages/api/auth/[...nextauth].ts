@@ -64,6 +64,7 @@ export default NextAuth({
     },
 
     async session({ session, token }) {
+      console.log('session', session);
       if (session && session.user) {
         session.user.accessToken = token.accessToken;
         session.user.refreshToken = token.refreshToken;

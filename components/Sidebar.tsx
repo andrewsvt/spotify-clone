@@ -27,7 +27,7 @@ const Sidebar: NextPage = () => {
   return (
     <div className="hidden md:flex flex-col justify-between h-screen text-gray-500 text-xs lg:text-sm border-r border-gray-900 overflow-y-scroll scrollbar-hide max-w-[12rem] lg:max-w-[15rem] w-full">
       <div className="flex flex-col font-medium space-y-8">
-        <div className="p-6 space-y-8">
+        <div className="px-6 pt-6 space-y-8">
           <svg viewBox="0 0 1134 340" className="w-32">
             <title>Spotify</title>
             <path

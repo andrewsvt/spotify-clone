@@ -1,11 +1,12 @@
 import type { NextPage } from 'next';
+import { useCallback } from 'react';
 
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import useSongInfo from '../hooks/useSongInfo';
 import useSpotify from '../hooks/useSpotify';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentTrackIdState, isPlayingState } from '../atoms/songAtom';
 
 const Player: NextPage = () => {
@@ -13,44 +14,76 @@ const Player: NextPage = () => {
 
   const { data: session, status } = useSession();
 
+  const [deviceId, setDeviceId] = useState<[string] | null>(null);
+  const [deviceIsActive, setDeviceIsActive] = useState<boolean>(false);
   const [currentTrackId, setCurrentTrackId] = useRecoilState(currentTrackIdState);
   const [isPlaying, setPlaying] = useRecoilState(isPlayingState);
+
   const [volume, setVolume] = useState<number>(50);
 
   const songInfo = useSongInfo();
 
-  const fetchCurrentSong = async () => {
-    if (!songInfo) {
-      spotifyApi.getMyCurrentPlayingTrack().then((data: any) => {
-        console.log('now playing ', data.body?.item);
-        setCurrentTrackId(data.body?.item?.id);
+  const getCurrentDevice = async () => {
+    try {
+      await spotifyApi.getMyDevices().then((res: any) => {
+        setDeviceId([res.body.devices[0].id]);
       });
-
-      spotifyApi.getMyCurrentPlaybackState().then((data) => {
-        setPlaying(data.body?.is_playing);
-      });
-
-      console.log('device', (await spotifyApi.getMyDevices()).body.devices?.[0].id);
+    } catch (err) {
+      console.log(err);
     }
   };
+
+  const fetchCurrentSong = useCallback(async () => {
+    try {
+      if (!songInfo) {
+        spotifyApi.getMyCurrentPlayingTrack().then((res: any) => {
+          console.log('now playing ', res.body?.item);
+          setCurrentTrackId(res.body?.item?.id);
+        });
+
+        spotifyApi.getMyCurrentPlaybackState().then((res) => {
+          setPlaying(res.body?.is_playing);
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, [songInfo, spotifyApi]);
+
+  useEffect(() => {
+    if (!deviceId) {
+      getCurrentDevice();
+      console.log('fetching current device...');
+    } else if (deviceIsActive === false) {
+      spotifyApi.transferMyPlayback(deviceId);
+      setDeviceIsActive(true);
+      console.log('device has been transfered - ', deviceId, deviceIsActive);
+    }
+  }, [spotifyApi, session]);
 
   useEffect(() => {
     if (spotifyApi.getAccessToken() && !currentTrackId) {
       fetchCurrentSong();
       // setVolume(50);
     }
-  }, [currentTrackId, spotifyApi, session]);
+  }, [currentTrackId, spotifyApi, session, fetchCurrentSong]);
 
   const handlePlayPause = async () => {
-    await spotifyApi.getMyCurrentPlaybackState().then((data) => {
-      if (data.body.is_playing) {
-        spotifyApi.pause();
-        setPlaying(false);
-      } else {
-        spotifyApi.play();
-        setPlaying(true);
+    try {
+      const response = await spotifyApi.getMyCurrentPlaybackState();
+
+      if (response.body) {
+        if (response.body.is_playing) {
+          await spotifyApi.pause();
+          setPlaying(false);
+        } else {
+          await spotifyApi.play();
+          setPlaying(true);
+        }
       }
-    });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

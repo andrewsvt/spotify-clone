@@ -1,29 +1,33 @@
+import { useEffect, useState, useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
+
+import { currentTrackIdState } from '../atoms/songAtom';
+
 import useSpotify from './useSpotify';
-import { useRecoilState } from 'recoil';
-import { currentTrackIdState, isPlayingState } from '../atoms/songAtom';
-import { useEffect, useState } from 'react';
 
 export default function useSongInfo() {
   const { spotifyApi } = useSpotify();
-  const [currentTrackId, setCurrentTrackId] = useRecoilState(currentTrackIdState);
+
   const [songInfo, setSongInfo] = useState<SpotifyApi.SingleTrackResponse | null>(null);
 
-  const fetchSongInfo = async () => {
-    if (currentTrackId) {
-      const trackInfo = await fetch(`https://api.spotify.com/v1/tracks/${currentTrackId}`, {
-        headers: {
-          Authorization: `Bearer ${spotifyApi.getAccessToken()}`,
-        },
-      }).then((res) => res.json());
+  const currentTrackId = useRecoilValue(currentTrackIdState);
 
-      setSongInfo(trackInfo);
+  const fetchSongInfo = useCallback(async () => {
+    if (currentTrackId) {
+      try {
+        const response = await spotifyApi.getTrack(currentTrackId);
+        if (response.body) {
+          setSongInfo(response.body);
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
-  };
+  }, [currentTrackId]);
 
   useEffect(() => {
     fetchSongInfo();
-  }),
-    [currentTrackId, spotifyApi];
+  }, [fetchSongInfo, spotifyApi]);
 
   return songInfo;
 }

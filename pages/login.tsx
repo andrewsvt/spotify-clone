@@ -20,7 +20,7 @@ const Login: NextPage<LoginProps> = ({ providers }) => {
                 callbackUrl: '/',
               })
             }
-            className="bg-[#1fdf64] hover:bg-white text-white hover:text-black py-5 px-7 rounded-full">
+            className="border hover:bg-white text-white hover:text-black py-5 px-7 rounded-full">
             Login with {provider.name}
           </button>
         </div>

@@ -34,6 +34,7 @@ const Center: NextPage = () => {
 
   useEffect(() => {
     setColor(shuffle(colors).pop());
+    console.log('selectedPlaylistId', selectedPlaylistId);
   }, [selectedPlaylistId]);
 
   useEffect(() => {
@@ -66,7 +67,12 @@ const Center: NextPage = () => {
     <div className="flex flex-grow h-screen overflow-y-scroll flex-col text-white bg-[#121212] pb-24">
       <header className="absolute top-5 right-8">
         <div className="flex items-center bg-black space-x-2 opacity-90 cursor-pointer rounded-full p-1 pr-2">
-          <img className="rounded-full w-6 h-6" src={currentUser?.images?.[0].url} alt=""></img>
+          {currentUser?.images?.[0] ? (
+            <img className="rounded-full w-6 h-6" src={currentUser?.images?.[0].url} alt="" />
+          ) : (
+            <></>
+          )}
+
           <h2 className="font-bold text-sm">{currentUser?.display_name}</h2>
           <svg
             xmlns="http://www.w3.org/2000/svg"
