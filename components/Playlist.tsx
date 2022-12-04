@@ -3,16 +3,16 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import useSpotify from '../hooks/useSpotify';
+import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { shuffle } from 'lodash';
 import clsx from 'clsx';
 
 import { currentPlaylistIdState, playlistState } from '../atoms/playlistAtom';
-
-import { useRecoilValue, useRecoilState } from 'recoil';
-
-import Songs from './Songs';
 import { currentUserState } from '../atoms/userAtom';
+
+import Layout from './Layout';
+import Songs from './Songs';
 
 const colors = [
   'from-indigo-900',
@@ -23,7 +23,7 @@ const colors = [
   'from-purple-900',
 ];
 
-const Center: NextPage = () => {
+const Playlist: NextPage = () => {
   const { data: session } = useSession();
   const [color, setColor] = useState<string>();
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
@@ -157,4 +157,4 @@ const Center: NextPage = () => {
   );
 };
 
-export default Center;
+export default Playlist;

@@ -28,6 +28,10 @@
     scrollbar-gutter: none;
   }
 
+  .active-nav-link {
+    color: white;
+  }
+
   @font-face {
     font-family: 'CircularStd';
     src: url('../public/fonts/CircularStd-Light.otf') format('opentype');

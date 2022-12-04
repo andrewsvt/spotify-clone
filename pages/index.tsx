@@ -1,25 +1,20 @@
 import type { NextPage, GetServerSideProps } from 'next';
+
 import { getSession } from 'next-auth/react';
-import Center from '../components/Center';
 
-import Sidebar from '../components/Sidebar';
-import Player from '../components/Player';
+import Layout from '../components/Layout';
+import Home from '../components/Home';
+import Playlist from '../components/Playlist';
 
-const Home: NextPage = () => {
+const Main: NextPage = () => {
   return (
-    <div className="bg-black h-screen overflow-hidden">
-      <main className="flex">
-        <Sidebar />
-        <Center />
-      </main>
-      <footer className="sticky bottom-0">
-        <Player />
-      </footer>
-    </div>
+    <Layout>
+      <Playlist />
+    </Layout>
   );
 };
 
-export default Home;
+export default Main;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);

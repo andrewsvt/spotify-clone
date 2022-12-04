@@ -1,8 +1,13 @@
 import type { NextPage } from 'next';
+// import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { signOut, useSession } from 'next-auth/react';
+
 import { useRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
 import useSpotify from '../hooks/useSpotify';
+
 import { currentPlaylistIdState } from '../atoms/playlistAtom';
 
 const Sidebar: NextPage = () => {
